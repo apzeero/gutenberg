@@ -89,13 +89,17 @@ describe( 'Align Hook Works As Expected', () => {
 				'.components-dropdown-menu__menu button.is-active';
 			// set the specified alignment.
 			await insertBlock( blockName );
+			await page.waitForSelector( CHANGE_ALIGNMENT_BUTTON_SELECTOR );
 			await page.click( CHANGE_ALIGNMENT_BUTTON_SELECTOR );
+			await page.waitForXPath( BUTTON_XPATH );
 			await ( await page.$x( BUTTON_XPATH ) )[ 0 ].click();
 
 			// verify the button of the specified alignment is pressed.
 			await page.click( CHANGE_ALIGNMENT_BUTTON_SELECTOR );
-			let pressedButtons = await page.$$( BUTTON_PRESSED_SELECTOR );
-			expect( pressedButtons ).toHaveLength( 1 );
+			const pressedButton = await page.waitForSelector(
+				BUTTON_PRESSED_SELECTOR
+			);
+			expect( pressedButton ).not.toBe( null );
 
 			let htmlMarkup = await getEditedPostContent();
 
@@ -115,7 +119,7 @@ describe( 'Align Hook Works As Expected', () => {
 
 			// verify no alignment button is in pressed state.
 			await page.click( CHANGE_ALIGNMENT_BUTTON_SELECTOR );
-			pressedButtons = await page.$$( BUTTON_PRESSED_SELECTOR );
+			let pressedButtons = await page.$$( BUTTON_PRESSED_SELECTOR );
 			expect( pressedButtons ).toHaveLength( 0 );
 
 			// verify alignment markup was removed from the block.
